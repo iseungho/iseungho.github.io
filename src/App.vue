@@ -60,12 +60,38 @@ const activitySlides = [
 
 const gallerySlides = { frontStars: frontStarsSlides, capeasy: capeasySlides, worldCloud: worldCloudSlides, pangyeori: pangyeoriSlides, activities: activitySlides }
 type GalleryName = keyof typeof gallerySlides
+type GallerySlide = { src: string; alt: string; label: string }
+
+const makeLoopSlides = (slides: readonly GallerySlide[]) => {
+  const originals = slides.map((slide, originalIndex) => ({ slide, originalIndex, clone: false, key: `slide-${slide.src}` }))
+  if (slides.length < 2) return originals
+  return [
+    { slide: slides[slides.length - 1], originalIndex: slides.length - 1, clone: true, key: `clone-last-${slides[slides.length - 1].src}` },
+    ...originals,
+    { slide: slides[0], originalIndex: 0, clone: true, key: `clone-first-${slides[0].src}` },
+  ]
+}
+
+const loopedGallerySlides = {
+  frontStars: makeLoopSlides(frontStarsSlides),
+  capeasy: makeLoopSlides(capeasySlides),
+  worldCloud: makeLoopSlides(worldCloudSlides),
+  pangyeori: makeLoopSlides(pangyeoriSlides),
+  activities: makeLoopSlides(activitySlides),
+}
 
 const slideIndexes = reactive<Record<GalleryName, number>>({ frontStars: 0, capeasy: 0, worldCloud: 0, pangyeori: 0, activities: 0 })
+const trackPositions = reactive<Record<GalleryName, number>>({ frontStars: 1, capeasy: 1, worldCloud: 1, pangyeori: 0, activities: 1 })
+const trackTransitions = reactive<Record<GalleryName, boolean>>({ frontStars: true, capeasy: true, worldCloud: true, pangyeori: true, activities: true })
+const trackAnimating = reactive<Record<GalleryName, boolean>>({ frontStars: false, capeasy: false, worldCloud: false, pangyeori: false, activities: false })
 const hintVisible = reactive<Record<GalleryName, boolean>>({ frontStars: false, capeasy: false, worldCloud: false, pangyeori: false, activities: false })
 const modalGallery = ref<GalleryName | null>(null)
 const modalSlide = ref(0)
 const modalSlides = computed(() => modalGallery.value ? gallerySlides[modalGallery.value] : [])
+const loopedModalSlides = computed(() => modalGallery.value ? loopedGallerySlides[modalGallery.value] : [])
+const modalTrackPosition = ref(0)
+const modalTrackTransition = ref(true)
+const modalTrackAnimating = ref(false)
 const activeModalSlide = computed(() => modalSlides.value[modalSlide.value] ?? null)
 const modalZoom = ref(1)
 const modalPan = reactive({ x: 0, y: 0 })
@@ -108,7 +134,24 @@ const pageSections = [
 
 const moveSlide = (gallery: GalleryName, direction: number) => {
   const length = gallerySlides[gallery].length
+  if (length < 2 || trackAnimating[gallery]) return
+  trackAnimating[gallery] = true
   slideIndexes[gallery] = (slideIndexes[gallery] + direction + length) % length
+  trackPositions[gallery] += direction
+}
+
+const finishSlideMove = (gallery: GalleryName) => {
+  const length = gallerySlides[gallery].length
+  if (trackPositions[gallery] === 0 || trackPositions[gallery] === length + 1) {
+    trackTransitions[gallery] = false
+    trackPositions[gallery] = trackPositions[gallery] === 0 ? length : 1
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      trackTransitions[gallery] = true
+      trackAnimating[gallery] = false
+    }))
+    return
+  }
+  trackAnimating[gallery] = false
 }
 
 const startSwipe = (event: TouchEvent) => {
@@ -159,6 +202,9 @@ const openImage = async (gallery: GalleryName, index: number) => {
   if (performance.now() < suppressImageOpenUntil) return
   modalGallery.value = gallery
   modalSlide.value = index
+  modalTrackPosition.value = gallerySlides[gallery].length > 1 ? index + 1 : index
+  modalTrackTransition.value = true
+  modalTrackAnimating.value = false
   resetModalView()
   await nextTick()
   imageDialog.value?.showModal()
@@ -180,9 +226,25 @@ const closeImage = () => {
 const moveModal = (direction: number) => {
   if (!modalGallery.value) return
   const length = gallerySlides[modalGallery.value].length
+  if (length < 2 || modalTrackAnimating.value) return
+  modalTrackAnimating.value = true
   modalSlide.value = (modalSlide.value + direction + length) % length
+  modalTrackPosition.value += direction
   resetModalView()
   void nextTick(() => requestAnimationFrame(measureModalImage))
+}
+const finishModalMove = () => {
+  const length = modalSlides.value.length
+  if (modalTrackPosition.value === 0 || modalTrackPosition.value === length + 1) {
+    modalTrackTransition.value = false
+    modalTrackPosition.value = modalTrackPosition.value === 0 ? length : 1
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      modalTrackTransition.value = true
+      modalTrackAnimating.value = false
+    }))
+    return
+  }
+  modalTrackAnimating.value = false
 }
 const setModalZoom = (zoom: number, clientX?: number, clientY?: number) => {
   const previousZoom = modalZoom.value
@@ -468,12 +530,12 @@ const awards = [
                 <div class="gallery project-gallery" :class="{ 'show-nav': hintVisible.frontStars }" data-gallery="frontStars" role="region" aria-roledescription="carousel" aria-label="Sentry 주요 화면" tabindex="0" @keydown.left.prevent="moveSlide('frontStars', -1)" @keydown.right.prevent="moveSlide('frontStars', 1)" @touchstart.passive="startSwipe" @touchend.passive="endSwipe('frontStars', $event)" @pointerdown="startMouseDrag" @pointerup="endMouseDrag('frontStars', $event)" @pointercancel="cancelMouseDrag">
                   <div class="slide-counter" aria-live="polite">{{ slideIndexes.frontStars + 1 }} / {{ frontStarsSlides.length }}</div>
                   <div class="carousel-viewport">
-                    <div class="carousel-track" :style="{ transform: `translateX(-${slideIndexes.frontStars * 100}%)` }">
-                      <figure v-for="(slide, index) in frontStarsSlides" :key="slide.src" :aria-hidden="index !== slideIndexes.frontStars">
-                        <button class="image-open-button" type="button" :aria-label="`${slide.label} 크게 보기`" :tabindex="index === slideIndexes.frontStars ? 0 : -1" @click="openImage('frontStars', index)">
-                          <img :src="slide.src" :alt="slide.alt" loading="lazy" draggable="false">
+                    <div class="carousel-track" :style="{ transform: `translateX(-${trackPositions.frontStars * 100}%)`, transition: trackTransitions.frontStars ? undefined : 'none' }" @transitionend.self="finishSlideMove('frontStars')">
+                      <figure v-for="item in loopedGallerySlides.frontStars" :key="item.key" :aria-hidden="item.clone || item.originalIndex !== slideIndexes.frontStars">
+                        <button class="image-open-button" type="button" :aria-label="`${item.slide.label} 크게 보기`" :tabindex="!item.clone && item.originalIndex === slideIndexes.frontStars ? 0 : -1" @click="openImage('frontStars', item.originalIndex)">
+                          <img :src="item.slide.src" :alt="item.slide.alt" loading="lazy" draggable="false">
                         </button>
-                        <figcaption>{{ slide.label }}</figcaption>
+                        <figcaption>{{ item.slide.label }}</figcaption>
                       </figure>
                     </div>
                   </div>
@@ -511,12 +573,12 @@ const awards = [
                 <div class="gallery project-gallery" :class="{ 'show-nav': hintVisible.capeasy }" data-gallery="capeasy" role="region" aria-roledescription="carousel" aria-label="Capeasy 주요 화면" tabindex="0" @keydown.left.prevent="moveSlide('capeasy', -1)" @keydown.right.prevent="moveSlide('capeasy', 1)" @touchstart.passive="startSwipe" @touchend.passive="endSwipe('capeasy', $event)" @pointerdown="startMouseDrag" @pointerup="endMouseDrag('capeasy', $event)" @pointercancel="cancelMouseDrag">
                   <div class="slide-counter" aria-live="polite">{{ slideIndexes.capeasy + 1 }} / {{ capeasySlides.length }}</div>
                   <div class="carousel-viewport">
-                    <div class="carousel-track" :style="{ transform: `translateX(-${slideIndexes.capeasy * 100}%)` }">
-                      <figure v-for="(slide, index) in capeasySlides" :key="slide.src" :aria-hidden="index !== slideIndexes.capeasy">
-                        <button class="image-open-button" type="button" :aria-label="`${slide.label} 크게 보기`" :tabindex="index === slideIndexes.capeasy ? 0 : -1" @click="openImage('capeasy', index)">
-                          <img :src="slide.src" :alt="slide.alt" loading="lazy" draggable="false">
+                    <div class="carousel-track" :style="{ transform: `translateX(-${trackPositions.capeasy * 100}%)`, transition: trackTransitions.capeasy ? undefined : 'none' }" @transitionend.self="finishSlideMove('capeasy')">
+                      <figure v-for="item in loopedGallerySlides.capeasy" :key="item.key" :aria-hidden="item.clone || item.originalIndex !== slideIndexes.capeasy">
+                        <button class="image-open-button" type="button" :aria-label="`${item.slide.label} 크게 보기`" :tabindex="!item.clone && item.originalIndex === slideIndexes.capeasy ? 0 : -1" @click="openImage('capeasy', item.originalIndex)">
+                          <img :src="item.slide.src" :alt="item.slide.alt" loading="lazy" draggable="false">
                         </button>
-                        <figcaption>{{ slide.label }}</figcaption>
+                        <figcaption>{{ item.slide.label }}</figcaption>
                       </figure>
                     </div>
                   </div>
@@ -549,12 +611,12 @@ const awards = [
                 <div class="gallery project-gallery" :class="{ 'show-nav': hintVisible.worldCloud }" data-gallery="worldCloud" role="region" aria-roledescription="carousel" aria-label="Project WorldCloud 주요 화면" tabindex="0" @keydown.left.prevent="moveSlide('worldCloud', -1)" @keydown.right.prevent="moveSlide('worldCloud', 1)" @touchstart.passive="startSwipe" @touchend.passive="endSwipe('worldCloud', $event)" @pointerdown="startMouseDrag" @pointerup="endMouseDrag('worldCloud', $event)" @pointercancel="cancelMouseDrag">
                   <div class="slide-counter" aria-live="polite">{{ slideIndexes.worldCloud + 1 }} / {{ worldCloudSlides.length }}</div>
                   <div class="carousel-viewport">
-                    <div class="carousel-track" :style="{ transform: `translateX(-${slideIndexes.worldCloud * 100}%)` }">
-                      <figure v-for="(slide, index) in worldCloudSlides" :key="slide.src" :aria-hidden="index !== slideIndexes.worldCloud">
-                        <button class="image-open-button" type="button" :aria-label="`${slide.label} 크게 보기`" :tabindex="index === slideIndexes.worldCloud ? 0 : -1" @click="openImage('worldCloud', index)">
-                          <img :src="slide.src" :alt="slide.alt" loading="lazy" draggable="false">
+                    <div class="carousel-track" :style="{ transform: `translateX(-${trackPositions.worldCloud * 100}%)`, transition: trackTransitions.worldCloud ? undefined : 'none' }" @transitionend.self="finishSlideMove('worldCloud')">
+                      <figure v-for="item in loopedGallerySlides.worldCloud" :key="item.key" :aria-hidden="item.clone || item.originalIndex !== slideIndexes.worldCloud">
+                        <button class="image-open-button" type="button" :aria-label="`${item.slide.label} 크게 보기`" :tabindex="!item.clone && item.originalIndex === slideIndexes.worldCloud ? 0 : -1" @click="openImage('worldCloud', item.originalIndex)">
+                          <img :src="item.slide.src" :alt="item.slide.alt" loading="lazy" draggable="false">
                         </button>
-                        <figcaption>{{ slide.label }}</figcaption>
+                        <figcaption>{{ item.slide.label }}</figcaption>
                       </figure>
                     </div>
                   </div>
@@ -624,12 +686,12 @@ const awards = [
             <div class="gallery activity-gallery" :class="{ 'show-nav': hintVisible.activities }" data-gallery="activities" role="region" aria-roledescription="carousel" aria-label="대외 활동 자료" tabindex="0" @keydown.left.prevent="moveSlide('activities', -1)" @keydown.right.prevent="moveSlide('activities', 1)" @touchstart.passive="startSwipe" @touchend.passive="endSwipe('activities', $event)" @pointerdown="startMouseDrag" @pointerup="endMouseDrag('activities', $event)" @pointercancel="cancelMouseDrag">
               <div class="slide-counter" aria-live="polite">{{ slideIndexes.activities + 1 }} / {{ activitySlides.length }}</div>
               <div class="carousel-viewport">
-                <div class="carousel-track" :style="{ transform: `translateX(-${slideIndexes.activities * 100}%)` }">
-                  <figure v-for="(slide, index) in activitySlides" :key="slide.src" :aria-hidden="index !== slideIndexes.activities">
-                    <button class="image-open-button" type="button" :aria-label="`${slide.label} 크게 보기`" :tabindex="index === slideIndexes.activities ? 0 : -1" @click="openImage('activities', index)">
-                      <img :src="slide.src" :alt="slide.alt" loading="lazy" draggable="false">
+                <div class="carousel-track" :style="{ transform: `translateX(-${trackPositions.activities * 100}%)`, transition: trackTransitions.activities ? undefined : 'none' }" @transitionend.self="finishSlideMove('activities')">
+                  <figure v-for="item in loopedGallerySlides.activities" :key="item.key" :aria-hidden="item.clone || item.originalIndex !== slideIndexes.activities">
+                    <button class="image-open-button" type="button" :aria-label="`${item.slide.label} 크게 보기`" :tabindex="!item.clone && item.originalIndex === slideIndexes.activities ? 0 : -1" @click="openImage('activities', item.originalIndex)">
+                      <img :src="item.slide.src" :alt="item.slide.alt" loading="lazy" draggable="false">
                     </button>
-                    <figcaption>{{ slide.label }}</figcaption>
+                    <figcaption>{{ item.slide.label }}</figcaption>
                   </figure>
                 </div>
               </div>
@@ -731,9 +793,9 @@ const awards = [
         </div>
         <figure>
           <div ref="modalStage" class="modal-stage" @wheel.prevent="zoomModal" @touchstart="startModalTouch" @touchmove.prevent="moveModalTouch" @touchend="endModalTouch" @touchcancel="endModalTouch" @pointerdown="startModalMouseDrag" @pointermove="moveModalMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelModalMouseDrag">
-            <div class="modal-track" :style="{ transform: `translateX(-${modalSlide * 100}%)` }">
-              <div v-for="(slide, index) in modalSlides" :key="slide.src" class="modal-slide" :aria-hidden="index !== modalSlide">
-                <img :src="slide.src" :alt="slide.alt" draggable="false" :style="index === modalSlide ? activeModalImageStyle : undefined" @load="index === modalSlide && measureModalImage()">
+            <div class="modal-track" :style="{ transform: `translateX(-${modalTrackPosition * 100}%)`, transition: modalTrackTransition ? undefined : 'none' }" @transitionend.self="finishModalMove">
+              <div v-for="item in loopedModalSlides" :key="item.key" class="modal-slide" :aria-hidden="item.clone || item.originalIndex !== modalSlide">
+                <img :src="item.slide.src" :alt="item.slide.alt" draggable="false" :style="item.originalIndex === modalSlide ? activeModalImageStyle : undefined" @load="!item.clone && item.originalIndex === modalSlide && measureModalImage()">
               </div>
             </div>
             <button v-if="modalSlides.length > 1" type="button" class="slide-button modal-nav modal-prev" aria-label="이전 이미지" @click="moveModal(-1)"></button>

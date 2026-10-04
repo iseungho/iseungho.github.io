@@ -98,7 +98,7 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .button-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 38px; }
 .button-row.centered { justify-content: center; }
 .button-row.compact { margin-top: 30px; }
-.button { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 14px; border: 1px solid transparent; border-radius: 8px; padding: 0 22px; font-size: .98rem; font-weight: 850; transition: transform .16s var(--ease-out), background-color .18s ease, color .18s ease, border-color .18s ease; }
+.button { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid transparent; border-radius: 8px; padding: 0 22px; font-size: .98rem; font-weight: 850; transition: transform .16s var(--ease-out), background-color .18s ease, color .18s ease, border-color .18s ease; }
 .button svg { width: 18px; height: 18px; flex: none; fill: currentColor; }
 .button:active { transform: scale(.97); }
 @media (hover: hover) and (pointer: fine) {
@@ -146,7 +146,7 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .tag-list span { padding: 8px 11px; border: 1px solid var(--line); border-radius: 6px; color: var(--text-soft); background: var(--bg); font-size: .86rem; line-height: 1; font-weight: 800; }
 .text-link { display: inline-block; margin-top: 32px; color: var(--accent); font-weight: 900; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent); }
 .project-link-row { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 32px; }
-.project-link-row .text-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 0; }
+.project-link-row .text-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 0; }
 .project-link-row .text-link svg { width: 17px; height: 17px; flex: none; fill: currentColor; }
 .media-caption { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 0 6px 4px; color: #fff; }
 .media-caption span { color: #9fbaff; font-size: .82rem; font-weight: 900; letter-spacing: .14em; }
