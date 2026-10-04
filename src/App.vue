@@ -42,6 +42,7 @@ const capeasySlides = [
 const worldCloudSlides = [
   { src: '/projects/worldcloud-select.png', alt: 'WorldCloud 대주제 선택 화면', label: '주제 선택' },
   { src: '/projects/worldcloud-result.png', alt: 'WorldCloud 뉴스 분석 결과 화면', label: '분석 결과' },
+  { src: '/projects/worldcloud-keywords.png', alt: 'LDA 토픽 분포와 주요 키워드를 시각화한 분석 결과', label: '키워드 분석 결과' },
 ]
 
 const pangyeoriSlides = [
