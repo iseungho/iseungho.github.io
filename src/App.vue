@@ -65,7 +65,10 @@ const slideIndexes = reactive<Record<GalleryName, number>>({ frontStars: 0, cape
 const hintVisible = reactive<Record<GalleryName, boolean>>({ frontStars: false, capeasy: false, worldCloud: false, pangyeori: false, activities: false })
 const modalGallery = ref<GalleryName | null>(null)
 const modalSlide = ref(0)
-const activeModalSlide = computed(() => modalGallery.value ? gallerySlides[modalGallery.value][modalSlide.value] : null)
+const modalSlides = computed(() => modalGallery.value ? gallerySlides[modalGallery.value] : [])
+const activeModalSlide = computed(() => modalSlides.value[modalSlide.value] ?? null)
+const modalZoom = ref(1)
+const modalPan = reactive({ x: 0, y: 0 })
 const activeModalCaption = computed(() => {
   const slide = activeModalSlide.value
   return slide && 'title' in slide ? `${slide.label} · ${slide.title}` : slide?.label
@@ -74,6 +77,14 @@ let hintObserver: IntersectionObserver | undefined
 let sectionObserver: IntersectionObserver | undefined
 let updateOutlineContrast: (() => void) | undefined
 const hintTimers: number[] = []
+let modalTouchMode: 'swipe' | 'pinch' | 'pan' | null = null
+let modalPinchDistance = 0
+let modalPinchZoom = 1
+let modalPanStartX = 0
+let modalPanStartY = 0
+let modalPanOriginX = 0
+let modalPanOriginY = 0
+let modalMousePanning = false
 
 const pageSections = [
   { id: 'top', label: '소개' },
@@ -130,20 +141,89 @@ const openImage = async (gallery: GalleryName, index: number) => {
   if (performance.now() < suppressImageOpenUntil) return
   modalGallery.value = gallery
   modalSlide.value = index
+  resetModalView()
   await nextTick()
   imageDialog.value?.showModal()
 }
-const closeImage = () => imageDialog.value?.close()
+const resetModalView = () => {
+  modalZoom.value = 1
+  modalPan.x = 0
+  modalPan.y = 0
+}
+const closeImage = () => {
+  resetModalView()
+  imageDialog.value?.close()
+}
 const moveModal = (direction: number) => {
   if (!modalGallery.value) return
   const length = gallerySlides[modalGallery.value].length
   modalSlide.value = (modalSlide.value + direction + length) % length
+  resetModalView()
 }
-const endModalSwipe = (event: TouchEvent) => {
-  const direction = swipeDirection(event)
-  if (direction) moveModal(direction)
+const setModalZoom = (zoom: number) => {
+  modalZoom.value = Math.min(4, Math.max(1, zoom))
+  if (modalZoom.value === 1) {
+    modalPan.x = 0
+    modalPan.y = 0
+  }
+}
+const zoomModal = (event: WheelEvent) => setModalZoom(modalZoom.value + (event.deltaY < 0 ? .25 : -.25))
+const touchDistance = (touches: TouchList) => Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY)
+const startModalTouch = (event: TouchEvent) => {
+  if (event.touches.length === 2) {
+    modalTouchMode = 'pinch'
+    modalPinchDistance = touchDistance(event.touches)
+    modalPinchZoom = modalZoom.value
+    return
+  }
+  const touch = event.touches[0]
+  modalPanStartX = touch.clientX
+  modalPanStartY = touch.clientY
+  modalPanOriginX = modalPan.x
+  modalPanOriginY = modalPan.y
+  modalTouchMode = modalZoom.value > 1 ? 'pan' : 'swipe'
+  if (modalTouchMode === 'swipe') {
+    swipeStartX = touch.clientX
+    swipeStartY = touch.clientY
+  }
+}
+const moveModalTouch = (event: TouchEvent) => {
+  if (modalTouchMode === 'pinch' && event.touches.length === 2) {
+    setModalZoom(modalPinchZoom * touchDistance(event.touches) / modalPinchDistance)
+  } else if (modalTouchMode === 'pan' && event.touches.length === 1) {
+    modalPan.x = modalPanOriginX + event.touches[0].clientX - modalPanStartX
+    modalPan.y = modalPanOriginY + event.touches[0].clientY - modalPanStartY
+  }
+}
+const endModalTouch = (event: TouchEvent) => {
+  if (modalTouchMode === 'swipe') {
+    const direction = swipeDirection(event)
+    if (direction) moveModal(direction)
+  }
+  if (!event.touches.length) modalTouchMode = null
+}
+const startModalMouseDrag = (event: PointerEvent) => {
+  if (event.pointerType !== 'mouse' || event.button !== 0) return
+  if (modalZoom.value === 1) {
+    startMouseDrag(event)
+    return
+  }
+  modalMousePanning = true
+  modalPanStartX = event.clientX
+  modalPanStartY = event.clientY
+  modalPanOriginX = modalPan.x
+  modalPanOriginY = modalPan.y
+}
+const moveModalMouseDrag = (event: PointerEvent) => {
+  if (!modalMousePanning || event.pointerType !== 'mouse') return
+  modalPan.x = modalPanOriginX + event.clientX - modalPanStartX
+  modalPan.y = modalPanOriginY + event.clientY - modalPanStartY
 }
 const endModalMouseDrag = (event: PointerEvent) => {
+  if (modalMousePanning) {
+    modalMousePanning = false
+    return
+  }
   if (!mouseDragging || event.pointerType !== 'mouse') return
   mouseDragging = false
   const distanceX = mouseDragStartX - event.clientX
@@ -151,6 +231,10 @@ const endModalMouseDrag = (event: PointerEvent) => {
   if (Math.abs(distanceX) > 45 && Math.abs(distanceX) > Math.abs(distanceY) * 1.2) {
     moveModal(distanceX > 0 ? 1 : -1)
   }
+}
+const cancelModalMouseDrag = () => {
+  modalMousePanning = false
+  cancelMouseDrag()
 }
 
 const applyTheme = (dark: boolean) => {
@@ -605,16 +689,20 @@ const awards = [
     </main>
 
     <dialog ref="imageDialog" class="image-dialog" aria-label="이미지 크게 보기" @click.self="closeImage" @keydown.left.prevent="moveModal(-1)" @keydown.right.prevent="moveModal(1)">
-      <div v-if="activeModalSlide" class="modal-viewer" @touchstart.passive="startSwipe" @touchend.passive="endModalSwipe">
+      <div v-if="activeModalSlide" class="modal-viewer">
         <div class="modal-toolbar">
-          <p>{{ modalSlide + 1 }} / {{ modalGallery ? gallerySlides[modalGallery].length : 0 }}</p>
+          <p>{{ modalSlide + 1 }} / {{ modalSlides.length }}<span v-if="modalZoom > 1"> · {{ Math.round(modalZoom * 100) }}%</span></p>
           <button type="button" aria-label="이미지 닫기" @click="closeImage">×</button>
         </div>
         <figure>
-          <div class="modal-stage" @pointerdown="startMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelMouseDrag">
-            <img :src="activeModalSlide.src" :alt="activeModalSlide.alt" draggable="false">
-            <button v-if="modalGallery && gallerySlides[modalGallery].length > 1" type="button" class="slide-button modal-nav modal-prev" aria-label="이전 이미지" @click="moveModal(-1)"></button>
-            <button v-if="modalGallery && gallerySlides[modalGallery].length > 1" type="button" class="slide-button modal-nav modal-next" aria-label="다음 이미지" @click="moveModal(1)"></button>
+          <div class="modal-stage" @wheel.prevent="zoomModal" @touchstart="startModalTouch" @touchmove.prevent="moveModalTouch" @touchend="endModalTouch" @touchcancel="endModalTouch" @pointerdown="startModalMouseDrag" @pointermove="moveModalMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelModalMouseDrag">
+            <div class="modal-track" :style="{ transform: `translateX(-${modalSlide * 100}%)` }">
+              <div v-for="(slide, index) in modalSlides" :key="slide.src" class="modal-slide" :aria-hidden="index !== modalSlide">
+                <img :src="slide.src" :alt="slide.alt" draggable="false" :style="index === modalSlide ? { transform: `translate3d(${modalPan.x}px, ${modalPan.y}px, 0) scale(${modalZoom})` } : undefined">
+              </div>
+            </div>
+            <button v-if="modalSlides.length > 1" type="button" class="slide-button modal-nav modal-prev" aria-label="이전 이미지" @click="moveModal(-1)"></button>
+            <button v-if="modalSlides.length > 1" type="button" class="slide-button modal-nav modal-next" aria-label="다음 이미지" @click="moveModal(1)"></button>
           </div>
           <figcaption>{{ activeModalCaption }}</figcaption>
         </figure>
