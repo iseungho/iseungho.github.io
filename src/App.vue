@@ -69,6 +69,15 @@ const modalSlides = computed(() => modalGallery.value ? gallerySlides[modalGalle
 const activeModalSlide = computed(() => modalSlides.value[modalSlide.value] ?? null)
 const modalZoom = ref(1)
 const modalPan = reactive({ x: 0, y: 0 })
+const modalStage = ref<HTMLElement | null>(null)
+const modalBaseSize = reactive({ width: 0, height: 0 })
+const activeModalImageStyle = computed(() => modalBaseSize.width ? {
+  width: `${modalBaseSize.width * modalZoom.value}px`,
+  height: `${modalBaseSize.height * modalZoom.value}px`,
+  maxWidth: 'none',
+  maxHeight: 'none',
+  transform: `translate3d(${modalPan.x}px, ${modalPan.y}px, 0)`,
+} : undefined)
 const activeModalCaption = computed(() => {
   const slide = activeModalSlide.value
   return slide && 'title' in slide ? `${slide.label} · ${slide.title}` : slide?.label
@@ -137,6 +146,15 @@ const endMouseDrag = (gallery: GalleryName, event: PointerEvent) => {
 }
 const cancelMouseDrag = () => { mouseDragging = false }
 
+const measureModalImage = () => {
+  const stage = modalStage.value
+  const image = stage?.querySelector<HTMLImageElement>('.modal-slide:not([aria-hidden="true"]) img')
+  if (!stage || !image?.naturalWidth || !stage.clientWidth || !stage.clientHeight) return
+  const scale = Math.min(1, stage.clientWidth / image.naturalWidth, stage.clientHeight / image.naturalHeight)
+  modalBaseSize.width = image.naturalWidth * scale
+  modalBaseSize.height = image.naturalHeight * scale
+}
+
 const openImage = async (gallery: GalleryName, index: number) => {
   if (performance.now() < suppressImageOpenUntil) return
   modalGallery.value = gallery
@@ -144,11 +162,14 @@ const openImage = async (gallery: GalleryName, index: number) => {
   resetModalView()
   await nextTick()
   imageDialog.value?.showModal()
+  requestAnimationFrame(measureModalImage)
 }
 const resetModalView = () => {
   modalZoom.value = 1
   modalPan.x = 0
   modalPan.y = 0
+  modalBaseSize.width = 0
+  modalBaseSize.height = 0
   modalMouseMode = null
   modalTouchMode = null
 }
@@ -161,6 +182,7 @@ const moveModal = (direction: number) => {
   const length = gallerySlides[modalGallery.value].length
   modalSlide.value = (modalSlide.value + direction + length) % length
   resetModalView()
+  void nextTick(() => requestAnimationFrame(measureModalImage))
 }
 const setModalZoom = (zoom: number) => {
   modalZoom.value = Math.min(4, Math.max(1, zoom))
@@ -299,6 +321,7 @@ onMounted(() => {
     window.addEventListener('resize', updateOutlineContrast)
     updateOutlineContrast()
   }
+  window.addEventListener('resize', measureModalImage)
 })
 
 onUnmounted(() => {
@@ -308,6 +331,7 @@ onUnmounted(() => {
     window.removeEventListener('scroll', updateOutlineContrast)
     window.removeEventListener('resize', updateOutlineContrast)
   }
+  window.removeEventListener('resize', measureModalImage)
   hintTimers.forEach((timer) => window.clearTimeout(timer))
 })
 
@@ -694,10 +718,10 @@ const awards = [
           <button type="button" aria-label="이미지 닫기" @click="closeImage">×</button>
         </div>
         <figure>
-          <div class="modal-stage" @wheel.prevent="zoomModal" @touchstart="startModalTouch" @touchmove.prevent="moveModalTouch" @touchend="endModalTouch" @touchcancel="endModalTouch" @pointerdown="startModalMouseDrag" @pointermove="moveModalMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelModalMouseDrag">
+          <div ref="modalStage" class="modal-stage" @wheel.prevent="zoomModal" @touchstart="startModalTouch" @touchmove.prevent="moveModalTouch" @touchend="endModalTouch" @touchcancel="endModalTouch" @pointerdown="startModalMouseDrag" @pointermove="moveModalMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelModalMouseDrag">
             <div class="modal-track" :style="{ transform: `translateX(-${modalSlide * 100}%)` }">
               <div v-for="(slide, index) in modalSlides" :key="slide.src" class="modal-slide" :aria-hidden="index !== modalSlide">
-                <img :src="slide.src" :alt="slide.alt" draggable="false" :style="index === modalSlide ? { zoom: modalZoom, transform: `translate3d(${modalPan.x / modalZoom}px, ${modalPan.y / modalZoom}px, 0)` } : undefined">
+                <img :src="slide.src" :alt="slide.alt" draggable="false" :style="index === modalSlide ? activeModalImageStyle : undefined" @load="index === modalSlide && measureModalImage()">
               </div>
             </div>
             <button v-if="modalSlides.length > 1" type="button" class="slide-button modal-nav modal-prev" aria-label="이전 이미지" @click="moveModal(-1)"></button>
