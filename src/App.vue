@@ -143,6 +143,15 @@ const endModalSwipe = (event: TouchEvent) => {
   const direction = swipeDirection(event)
   if (direction) moveModal(direction)
 }
+const endModalMouseDrag = (event: PointerEvent) => {
+  if (!mouseDragging || event.pointerType !== 'mouse') return
+  mouseDragging = false
+  const distanceX = mouseDragStartX - event.clientX
+  const distanceY = mouseDragStartY - event.clientY
+  if (Math.abs(distanceX) > 45 && Math.abs(distanceX) > Math.abs(distanceY) * 1.2) {
+    moveModal(distanceX > 0 ? 1 : -1)
+  }
+}
 
 const applyTheme = (dark: boolean) => {
   isDark.value = dark
@@ -602,8 +611,8 @@ const awards = [
           <button type="button" aria-label="이미지 닫기" @click="closeImage">×</button>
         </div>
         <figure>
-          <div class="modal-stage">
-            <img :src="activeModalSlide.src" :alt="activeModalSlide.alt">
+          <div class="modal-stage" @pointerdown="startMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelMouseDrag">
+            <img :src="activeModalSlide.src" :alt="activeModalSlide.alt" draggable="false">
             <button v-if="modalGallery && gallerySlides[modalGallery].length > 1" type="button" class="slide-button modal-nav modal-prev" aria-label="이전 이미지" @click="moveModal(-1)"></button>
             <button v-if="modalGallery && gallerySlides[modalGallery].length > 1" type="button" class="slide-button modal-nav modal-next" aria-label="다음 이미지" @click="moveModal(1)"></button>
           </div>

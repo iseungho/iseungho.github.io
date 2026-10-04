@@ -272,8 +272,9 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .modal-toolbar button { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.3); border-radius: 8px; color: #fff; background: rgba(255,255,255,.08); font-size: 1.8rem; line-height: 1; cursor: pointer; backdrop-filter: blur(8px); }
 .modal-toolbar button:hover, .modal-toolbar button:focus-visible { border-color: var(--lime); color: #12190d; background: var(--lime); }
 .modal-viewer figure { width: 100%; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; place-items: center; margin: 0; }
-.modal-stage { position: relative; width: 100%; height: 100%; min-height: 0; display: grid; place-items: center; }
-.modal-stage img { width: 100%; max-height: calc(100dvh - 150px); object-fit: contain; }
+.modal-stage { position: relative; width: 100%; height: 100%; min-height: 0; display: grid; place-items: center; cursor: grab; }
+.modal-stage:active { cursor: grabbing; }
+.modal-stage img { width: 100%; max-height: calc(100dvh - 150px); object-fit: contain; pointer-events: none; user-select: none; }
 .modal-viewer figcaption { min-height: 52px; max-width: 100%; display: flex; align-items: center; justify-content: center; padding-top: 14px; color: #d7deea; text-align: center; font-size: .98rem; line-height: 1.45; font-weight: 750; }
 .modal-prev { left: 14px; }
 .modal-next { right: 14px; }
