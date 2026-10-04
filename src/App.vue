@@ -288,9 +288,14 @@ const awards = [
           </div>
 
           <aside class="profile-card" aria-label="프로필 요약">
-            <p class="profile-label">PROFILE / 2026</p>
-            <p class="profile-name">이승호</p>
-            <p class="profile-role">Frontend Developer</p>
+            <div class="profile-header">
+              <img class="profile-photo" src="/profile.jpg" alt="프론트엔드 개발자 이승호 프로필 사진">
+              <div>
+                <p class="profile-label">PROFILE / 2026</p>
+                <p class="profile-name">이승호</p>
+                <p class="profile-role">Frontend Developer</p>
+              </div>
+            </div>
             <dl class="profile-facts">
               <div><dt>Focus</dt><dd>UI Architecture</dd></div>
               <div><dt>Experience</dt><dd>Team Lead</dd></div>

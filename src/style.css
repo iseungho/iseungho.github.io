@@ -112,8 +112,10 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 
 .profile-card { position: relative; padding: 42px; border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--surface) 94%, transparent); box-shadow: var(--shadow); }
 .profile-card::before { content: "FRONTEND"; position: absolute; top: -16px; right: 28px; padding: 7px 15px; border-radius: 999px; background: var(--lime); color: #111a15; font-size: .72rem; font-weight: 950; letter-spacing: .08em; }
+.profile-header { display: grid; grid-template-columns: 128px 1fr; gap: 28px; align-items: center; }
+.profile-photo { width: 128px; aspect-ratio: 1; border: 5px solid var(--surface); border-radius: 50%; object-fit: cover; object-position: center 24%; box-shadow: 0 0 0 1px var(--line-strong), 0 14px 32px rgba(15, 23, 42, .14); }
 .profile-label { margin: 0; color: var(--text-soft); font-size: .9rem; font-weight: 800; letter-spacing: .09em; }
-.profile-name { margin: 36px 0 0; padding-left: 24px; border-left: 4px solid var(--accent); font-size: 2.25rem; line-height: 1.15; font-weight: 950; letter-spacing: -.045em; }
+.profile-name { margin: 20px 0 0; padding-left: 20px; border-left: 4px solid var(--accent); font-size: 2.25rem; line-height: 1.15; font-weight: 950; letter-spacing: -.045em; }
 .profile-role { margin: 10px 0 0 28px; color: var(--text-soft); }
 .profile-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 24px; margin: 36px 0 0; padding-top: 30px; border-top: 1px solid var(--line); }
 .profile-facts dt { color: var(--text-soft); font-size: .8rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
@@ -311,6 +313,10 @@ footer p { margin: 0; }
   .hero h1 { font-size: clamp(2.85rem, 12vw, 3.7rem); }
   .hero-copy { margin-top: 28px; }
   .profile-card { padding: 34px 28px; border-radius: 14px; }
+  .profile-header { grid-template-columns: 96px 1fr; gap: 20px; }
+  .profile-photo { width: 96px; border-width: 4px; }
+  .profile-name { padding-left: 16px; font-size: 1.9rem; }
+  .profile-role { margin-left: 20px; }
   .profile-facts { grid-template-columns: 1fr; gap: 22px; }
   .section-heading { align-items: start; margin-bottom: 50px; }
   .section-heading > p { display: none; }
