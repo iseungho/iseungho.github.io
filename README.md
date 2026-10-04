@@ -2,6 +2,8 @@
 
 Vue, TypeScript, Tailwind CSS로 만든 프론트엔드 포트폴리오입니다.
 
+- Live: https://iseungho.github.io/
+
 ## Local development
 
 ```bash
