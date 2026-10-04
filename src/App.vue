@@ -84,7 +84,7 @@ let modalPanStartX = 0
 let modalPanStartY = 0
 let modalPanOriginX = 0
 let modalPanOriginY = 0
-let modalMousePanning = false
+let modalMouseMode: 'slide' | 'pan' | null = null
 
 const pageSections = [
   { id: 'top', label: '소개' },
@@ -149,6 +149,8 @@ const resetModalView = () => {
   modalZoom.value = 1
   modalPan.x = 0
   modalPan.y = 0
+  modalMouseMode = null
+  modalTouchMode = null
 }
 const closeImage = () => {
   resetModalView()
@@ -204,28 +206,26 @@ const endModalTouch = (event: TouchEvent) => {
 }
 const startModalMouseDrag = (event: PointerEvent) => {
   if (event.pointerType !== 'mouse' || event.button !== 0) return
-  if (modalZoom.value === 1) {
-    startMouseDrag(event)
-    return
-  }
-  modalMousePanning = true
+  if ((event.target as HTMLElement).closest('button')) return
+  const stage = event.currentTarget as HTMLElement
+  stage.setPointerCapture(event.pointerId)
+  modalMouseMode = modalZoom.value === 1 ? 'slide' : 'pan'
+  mouseDragStartX = event.clientX
+  mouseDragStartY = event.clientY
   modalPanStartX = event.clientX
   modalPanStartY = event.clientY
   modalPanOriginX = modalPan.x
   modalPanOriginY = modalPan.y
 }
 const moveModalMouseDrag = (event: PointerEvent) => {
-  if (!modalMousePanning || event.pointerType !== 'mouse') return
+  if (modalMouseMode !== 'pan' || event.pointerType !== 'mouse') return
   modalPan.x = modalPanOriginX + event.clientX - modalPanStartX
   modalPan.y = modalPanOriginY + event.clientY - modalPanStartY
 }
 const endModalMouseDrag = (event: PointerEvent) => {
-  if (modalMousePanning) {
-    modalMousePanning = false
-    return
-  }
-  if (!mouseDragging || event.pointerType !== 'mouse') return
-  mouseDragging = false
+  const mode = modalMouseMode
+  modalMouseMode = null
+  if (mode !== 'slide' || event.pointerType !== 'mouse') return
   const distanceX = mouseDragStartX - event.clientX
   const distanceY = mouseDragStartY - event.clientY
   if (Math.abs(distanceX) > 45 && Math.abs(distanceX) > Math.abs(distanceY) * 1.2) {
@@ -233,8 +233,7 @@ const endModalMouseDrag = (event: PointerEvent) => {
   }
 }
 const cancelModalMouseDrag = () => {
-  modalMousePanning = false
-  cancelMouseDrag()
+  modalMouseMode = null
 }
 
 const applyTheme = (dark: boolean) => {
@@ -698,7 +697,7 @@ const awards = [
           <div class="modal-stage" @wheel.prevent="zoomModal" @touchstart="startModalTouch" @touchmove.prevent="moveModalTouch" @touchend="endModalTouch" @touchcancel="endModalTouch" @pointerdown="startModalMouseDrag" @pointermove="moveModalMouseDrag" @pointerup="endModalMouseDrag" @pointercancel="cancelModalMouseDrag">
             <div class="modal-track" :style="{ transform: `translateX(-${modalSlide * 100}%)` }">
               <div v-for="(slide, index) in modalSlides" :key="slide.src" class="modal-slide" :aria-hidden="index !== modalSlide">
-                <img :src="slide.src" :alt="slide.alt" draggable="false" :style="index === modalSlide ? { transform: `translate3d(${modalPan.x}px, ${modalPan.y}px, 0) scale(${modalZoom})` } : undefined">
+                <img :src="slide.src" :alt="slide.alt" draggable="false" :style="index === modalSlide ? { zoom: modalZoom, transform: `translate3d(${modalPan.x / modalZoom}px, ${modalPan.y / modalZoom}px, 0)` } : undefined">
               </div>
             </div>
             <button v-if="modalSlides.length > 1" type="button" class="slide-button modal-nav modal-prev" aria-label="이전 이미지" @click="moveModal(-1)"></button>
