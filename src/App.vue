@@ -76,7 +76,7 @@ const activeModalImageStyle = computed(() => modalBaseSize.width ? {
   height: `${modalBaseSize.height * modalZoom.value}px`,
   maxWidth: 'none',
   maxHeight: 'none',
-  transform: `translate3d(${modalPan.x}px, ${modalPan.y}px, 0)`,
+  transform: `translate3d(calc(-50% + ${modalPan.x}px), calc(-50% + ${modalPan.y}px), 0)`,
 } : undefined)
 const activeModalCaption = computed(() => {
   const slide = activeModalSlide.value
@@ -184,14 +184,24 @@ const moveModal = (direction: number) => {
   resetModalView()
   void nextTick(() => requestAnimationFrame(measureModalImage))
 }
-const setModalZoom = (zoom: number) => {
-  modalZoom.value = Math.min(4, Math.max(1, zoom))
-  if (modalZoom.value === 1) {
+const setModalZoom = (zoom: number, clientX?: number, clientY?: number) => {
+  const previousZoom = modalZoom.value
+  const nextZoom = Math.min(4, Math.max(1, zoom))
+  if (nextZoom === previousZoom) return
+  if (nextZoom === 1) {
     modalPan.x = 0
     modalPan.y = 0
+  } else if (clientX !== undefined && clientY !== undefined && modalStage.value) {
+    const bounds = modalStage.value.getBoundingClientRect()
+    const offsetX = clientX - bounds.left - bounds.width / 2
+    const offsetY = clientY - bounds.top - bounds.height / 2
+    const ratio = nextZoom / previousZoom
+    modalPan.x = offsetX - (offsetX - modalPan.x) * ratio
+    modalPan.y = offsetY - (offsetY - modalPan.y) * ratio
   }
+  modalZoom.value = nextZoom
 }
-const zoomModal = (event: WheelEvent) => setModalZoom(modalZoom.value + (event.deltaY < 0 ? .25 : -.25))
+const zoomModal = (event: WheelEvent) => setModalZoom(modalZoom.value + (event.deltaY < 0 ? .25 : -.25), event.clientX, event.clientY)
 const touchDistance = (touches: TouchList) => Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY)
 const startModalTouch = (event: TouchEvent) => {
   if (event.touches.length === 2) {
@@ -213,7 +223,9 @@ const startModalTouch = (event: TouchEvent) => {
 }
 const moveModalTouch = (event: TouchEvent) => {
   if (modalTouchMode === 'pinch' && event.touches.length === 2) {
-    setModalZoom(modalPinchZoom * touchDistance(event.touches) / modalPinchDistance)
+    const centerX = (event.touches[0].clientX + event.touches[1].clientX) / 2
+    const centerY = (event.touches[0].clientY + event.touches[1].clientY) / 2
+    setModalZoom(modalPinchZoom * touchDistance(event.touches) / modalPinchDistance, centerX, centerY)
   } else if (modalTouchMode === 'pan' && event.touches.length === 1) {
     modalPan.x = modalPanOriginX + event.touches[0].clientX - modalPanStartX
     modalPan.y = modalPanOriginY + event.touches[0].clientY - modalPanStartY
