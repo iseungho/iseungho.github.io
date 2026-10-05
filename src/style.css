@@ -87,7 +87,8 @@ img { display: block; max-width: 100%; }
 
 .hero { min-height: 740px; display: flex; align-items: center; padding: 132px 0 86px; border-bottom: 1px solid var(--line); }
 .grid-backdrop { background: var(--bg); }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(360px, .72fr); gap: 90px; align-items: center; }
+.hero .content { width: min(1400px, calc(100% - 48px)); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(540px, .95fr); gap: 80px; align-items: center; }
 .eyebrow { margin: 0; display: flex; align-items: center; gap: 10px; color: var(--accent); font-size: .9rem; line-height: 1.4; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
 .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 5px color-mix(in srgb, var(--lime) 22%, transparent); }
 h1, h2, h3 { word-break: keep-all; overflow-wrap: anywhere; text-wrap: balance; }
@@ -111,16 +112,16 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .button-secondary { background: var(--surface); color: var(--text); border-color: var(--line-strong); }
 .button-secondary:hover, .button-secondary:focus-visible { color: var(--accent); border-color: var(--accent); }
 
-.profile-card { position: relative; padding: 48px; border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--surface) 94%, transparent); box-shadow: var(--shadow); }
-.profile-card::before { content: "FRONTEND"; position: absolute; top: -18px; right: 32px; padding: 8px 17px; border-radius: 999px; background: var(--lime); color: #111a15; font-size: .78rem; font-weight: 950; letter-spacing: .08em; }
-.profile-header { display: grid; grid-template-columns: 192px 1fr; gap: 32px; align-items: center; }
+.profile-card { position: relative; padding: 42px; border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--surface) 94%, transparent); box-shadow: var(--shadow); }
+.profile-card::before { content: "FRONTEND"; position: absolute; top: -16px; right: 28px; padding: 7px 15px; border-radius: 999px; background: var(--lime); color: #111a15; font-size: .72rem; font-weight: 950; letter-spacing: .08em; }
+.profile-header { display: grid; grid-template-columns: 192px 1fr; gap: 28px; align-items: center; }
 .profile-photo { width: 192px; aspect-ratio: 1; border: 5px solid var(--surface); border-radius: 50%; object-fit: cover; object-position: center 24%; box-shadow: 0 0 0 1px var(--line-strong), 0 14px 32px rgba(15, 23, 42, .14); }
-.profile-label { margin: 0; color: var(--text-soft); font-size: 1rem; font-weight: 800; letter-spacing: .09em; }
-.profile-name { margin: 22px 0 0; padding-left: 22px; border-left: 4px solid var(--accent); font-size: 2.55rem; line-height: 1.15; font-weight: 950; letter-spacing: -.045em; }
-.profile-role { margin: 12px 0 0 30px; color: var(--text-soft); font-size: 1.08rem; }
-.profile-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 34px 28px; margin: 40px 0 0; padding-top: 34px; border-top: 1px solid var(--line); }
-.profile-facts dt { color: var(--text-soft); font-size: .88rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
-.profile-facts dd { margin: 10px 0 0; font-size: 1.08rem; font-weight: 850; }
+.profile-label { margin: 0; color: var(--text-soft); font-size: .9rem; font-weight: 800; letter-spacing: .09em; }
+.profile-name { margin: 20px 0 0; padding-left: 20px; border-left: 4px solid var(--accent); font-size: 2.25rem; line-height: 1.15; font-weight: 950; letter-spacing: -.045em; }
+.profile-role { margin: 10px 0 0 28px; color: var(--text-soft); }
+.profile-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 24px; margin: 36px 0 0; padding-top: 30px; border-top: 1px solid var(--line); }
+.profile-facts dt { color: var(--text-soft); font-size: .8rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+.profile-facts dd { margin: 8px 0 0; font-size: 1rem; font-weight: 850; }
 
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 48px; margin-bottom: 72px; }
 .section-heading > p { max-width: 440px; margin: 0 0 4px; color: var(--text-soft); text-align: right; font-size: 1.05rem; }
@@ -297,7 +298,7 @@ footer p { margin: 0; }
 @media (max-width: 1050px) {
   .hero-grid, .detailed-case, .about-grid, .now-grid, .activity-layout { grid-template-columns: 1fr; }
   .hero-grid { gap: 64px; }
-  .profile-card { max-width: 680px; }
+  .profile-card { width: 100%; max-width: 760px; }
   .now-grid { gap: 34px; }
   .now-visual { max-width: 760px; }
   .about-grid { gap: 54px; }
@@ -316,13 +317,12 @@ footer p { margin: 0; }
   .hero { min-height: auto; padding: 128px 0 80px; }
   .hero h1 { font-size: clamp(2.85rem, 12vw, 3.7rem); }
   .hero-copy { margin-top: 28px; }
-  .profile-card { padding: 38px 28px; border-radius: 14px; }
+  .profile-card { width: calc(100% + 24px); max-width: none; margin-left: -12px; padding: 34px 28px; border-radius: 14px; }
   .profile-header { grid-template-columns: 144px 1fr; gap: 20px; }
   .profile-photo { width: 144px; border-width: 4px; }
-  .profile-label { font-size: .95rem; }
-  .profile-name { padding-left: 16px; font-size: 2.1rem; }
-  .profile-role { margin-left: 20px; font-size: 1rem; }
-  .profile-facts { grid-template-columns: 1fr; gap: 26px; margin-top: 34px; padding-top: 30px; }
+  .profile-name { padding-left: 16px; font-size: 1.9rem; }
+  .profile-role { margin-left: 20px; }
+  .profile-facts { grid-template-columns: 1fr; gap: 22px; }
   .section-heading { align-items: start; margin-bottom: 50px; }
   .section-heading > p { display: none; }
   .case-study { border-radius: 14px; }
