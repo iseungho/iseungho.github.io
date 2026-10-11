@@ -757,11 +757,11 @@ const awards = [
           <div class="award-list" aria-label="수상 내역">
             <article v-for="award in awards" :key="award.title">
               <time>{{ award.year }}</time>
-              <h3>{{ award.title }}</h3>
-              <p>
-                <span>{{ award.detail }}</span>
+              <div class="award-title">
+                <h3>{{ award.title }}</h3>
                 <a v-if="award.href" :href="award.href" target="_blank" rel="noreferrer">관련 기사 ↗</a>
-              </p>
+              </div>
+              <p>{{ award.detail }}</p>
             </article>
           </div>
         </div>
