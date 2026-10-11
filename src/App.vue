@@ -487,10 +487,10 @@ const awards = [
               </div>
             </div>
             <dl class="profile-facts">
-              <div><dt>Focus</dt><dd>User Flow · UI Architecture</dd></div>
-              <div><dt>Project Role</dt><dd>Frontend Lead</dd></div>
-              <div><dt>Specialty</dt><dd>Maps · Data Visualization</dd></div>
-              <div><dt>Language</dt><dd>JavaScript · TypeScript</dd></div>
+              <div><dt>Focus</dt><dd>UI Architecture</dd></div>
+              <div><dt>Language</dt><dd>Java · JavaScript · Python</dd></div>
+              <div><dt>Strength</dt><dd>Data Visualization</dd></div>
+              <div><dt>Stack</dt><dd>Vue · React · TypeScript</dd></div>
             </dl>
           </aside>
         </div>
