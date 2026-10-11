@@ -7,6 +7,8 @@ const projectLinks = {
   capeasy: 'https://github.com/iseungho/Capeasy',
   capeasyVideo: 'https://youtu.be/1_jV6IfomLs?si=04fPvdS1_v__2jb2',
   researchPaper: 'https://drive.google.com/file/d/1BSQGQ4Va-bEbjrWlNvYnOXFJJNKfgDvM/view?usp=sharing',
+  researchRiss: 'https://www.riss.kr/search/detail/DetailView.do?p_mat_type=1a0202e37d52c72d&control_no=6e54ad96001b65aee9810257f7042666&keyword=%EC%B4%88%ED%95%B4%EC%83%81%ED%99%94%20%EA%B8%B0%EB%B0%98%20%ED%8C%8C%EB%85%B8%EB%9D%BC%EB%A7%88%20%EC%8A%A4%ED%8B%B0%EC%B9%AD%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%97%90%EC%84%9C%20%EC%99%9C%EA%B3%A1%20%ED%98%84%EC%83%81%20%EC%B5%9C%EC%86%8C%ED%99%94%20%EC%97%B0%EA%B5%AC',
+  researchDbpia: 'https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12036439',
   worldCloud: 'https://github.com/iseungho/Project-WorldCloud',
   pangyeori: 'https://github.com/pangyeori/pangyeori-fe',
 }
@@ -50,12 +52,12 @@ const pangyeoriSlides = [
 ]
 
 const activitySlides = [
-  { src: '/activities/01.png', alt: '미래내일 일경험 및 뉴노멀 기업 연계 프로젝트 수료', label: '기업 연계 프로젝트', title: '미래내일 일경험 · 뉴노멀 프로젝트', meta: '위니드소프트 디지털 트윈 플랫폼 개발 참여', projectHref: null, projectLabel: null, resourceHref: null, resourceLabel: null },
-  { src: '/activities/02.png', alt: '2024 세종 DX 해커톤 우수상 수상', label: '세종 DX 해커톤', title: '2024 SW융합클러스터 세종 DX 해커톤', meta: '우수상 · 2024.08', projectHref: null, projectLabel: null, resourceHref: null, resourceLabel: null },
-  { src: '/activities/03.png', alt: '제21회 소프트웨어융합학과 학술제 대상 수상', label: '학술제', title: '제21회 소프트웨어융합학과 학술제', meta: '대상 · 2024.11', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resourceHref: null, resourceLabel: null },
-  { src: '/activities/04.png', alt: '대한전자공학회 2024년도 추계학술대회 논문 제출', label: '학술대회', title: '대한전자공학회 2024 추계학술대회', meta: '학부생 논문경진대회 멀티미디어 분야 논문 제출', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resourceHref: projectLinks.researchPaper, resourceLabel: '논문 원문 보기' },
-  { src: '/activities/06-paper.png', alt: '초해상화 기반 파노라마 스티칭 시스템 왜곡 최소화 연구 논문 첫 페이지', label: '학술대회 논문', title: '초해상화 기반 파노라마 스티칭 시스템에서 왜곡 현상 최소화 연구', meta: '대한전자공학회 2024 추계학술대회 · 학부생 논문경진대회', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resourceHref: projectLinks.researchPaper, resourceLabel: '논문 원문 보기' },
-  { src: '/activities/05.png', alt: '하이세종페스티벌 프로젝트 전시 참여', label: '프로젝트 전시', title: 'HI-SEJONG FESTIVAL', meta: '프로젝트 전시 참여 · 2024.12', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resourceHref: null, resourceLabel: null },
+  { src: '/activities/01.png', alt: '미래내일 일경험 및 뉴노멀 기업 연계 프로젝트 수료', label: '기업 연계 프로젝트', title: '미래내일 일경험 · 뉴노멀 프로젝트', meta: '위니드소프트 디지털 트윈 플랫폼 개발 참여', projectHref: null, projectLabel: null, resources: [] },
+  { src: '/activities/02.png', alt: '2024 세종 DX 해커톤 우수상 수상', label: '세종 DX 해커톤', title: '2024 SW융합클러스터 세종 DX 해커톤', meta: '우수상 · 2024.08', projectHref: null, projectLabel: null, resources: [] },
+  { src: '/activities/03.png', alt: '제21회 소프트웨어융합학과 학술제 대상 수상', label: '학술제', title: '제21회 소프트웨어융합학과 학술제', meta: '대상 · 2024.11', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resources: [] },
+  { src: '/activities/04.png', alt: '대한전자공학회 2024년도 추계학술대회 논문 제출', label: '학술대회', title: '대한전자공학회 2024 추계학술대회', meta: '학부생 논문경진대회 멀티미디어 분야 논문 제출', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resources: [{ href: projectLinks.researchPaper, label: 'PDF 원문' }, { href: projectLinks.researchRiss, label: 'RISS' }, { href: projectLinks.researchDbpia, label: 'DBpia' }] },
+  { src: '/activities/06-paper.png', alt: '초해상화 기반 파노라마 스티칭 시스템 왜곡 최소화 연구 논문 첫 페이지', label: '학술대회 논문', title: '초해상화 기반 파노라마 스티칭 시스템에서 왜곡 현상 최소화 연구', meta: '대한전자공학회 2024 추계학술대회 · 학부생 논문경진대회', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resources: [{ href: projectLinks.researchPaper, label: 'PDF 원문' }, { href: projectLinks.researchRiss, label: 'RISS' }, { href: projectLinks.researchDbpia, label: 'DBpia' }] },
+  { src: '/activities/05.png', alt: '하이세종페스티벌 프로젝트 전시 참여', label: '프로젝트 전시', title: 'HI-SEJONG FESTIVAL', meta: '프로젝트 전시 참여 · 2024.12', projectHref: '#capeasy', projectLabel: 'Capeasy 프로젝트 보기', resources: [] },
 ]
 
 const gallerySlides = { frontStars: frontStarsSlides, capeasy: capeasySlides, worldCloud: worldCloudSlides, pangyeori: pangyeoriSlides, activities: activitySlides }
@@ -420,10 +422,10 @@ const careers = [
 ]
 
 const awards = [
-  { year: '2024.11', title: '소프트웨어융합학과 학술제 대상', detail: '홍익대학교' },
-  { year: '2024.11', title: 'StoryLab Best Content상', detail: '뉴노멀 프로젝트' },
-  { year: '2024.08', title: 'SW융합클러스터 해커톤 우수상', detail: '세종 DX 해커톤' },
-  { year: '2023.09', title: 'SW융합클러스터 해커톤 인재상', detail: '디지털 콘텐츠 DX 해커톤' },
+  { year: '2024.11', title: '제21회 홍익대학교 과학기술대학 소프트웨어융합학과 학술제 대상', detail: '총장상', href: null },
+  { year: '2024.12', title: '홍익대학교 과학기술대학 소프트웨어융합학과 종합설계 졸업작품 우수 작품 선정', detail: '부총장상', href: null },
+  { year: '2024.08', title: 'SW융합클러스터 2.0 디지털 콘텐츠 세종 DX 해커톤 - 문화·관광 디지털 콘텐츠', detail: '우수상', href: 'https://www.hongik.ac.kr/kr/newscenter/news.do?mode=view&articleNo=115480' },
+  { year: '2023.09', title: 'SW융합클러스터 2.0 디지털 콘텐츠 DX 해커톤 SW융합클러스터 - 취약 계층 문제 해결', detail: '인재상', href: null },
 ]
 </script>
 
@@ -678,9 +680,9 @@ const awards = [
               <p class="activity-label">{{ activitySlides[slideIndexes.activities].label }}</p>
               <h3>{{ activitySlides[slideIndexes.activities].title }}</h3>
               <p>{{ activitySlides[slideIndexes.activities].meta }}</p>
-              <div v-if="activitySlides[slideIndexes.activities].projectHref || activitySlides[slideIndexes.activities].resourceHref" class="activity-links">
+              <div v-if="activitySlides[slideIndexes.activities].projectHref || activitySlides[slideIndexes.activities].resources.length" class="activity-links">
                 <a v-if="activitySlides[slideIndexes.activities].projectHref" :href="activitySlides[slideIndexes.activities].projectHref || undefined">{{ activitySlides[slideIndexes.activities].projectLabel }}</a>
-                <a v-if="activitySlides[slideIndexes.activities].resourceHref" :href="activitySlides[slideIndexes.activities].resourceHref || undefined" target="_blank" rel="noreferrer">{{ activitySlides[slideIndexes.activities].resourceLabel }} ↗</a>
+                <a v-for="resource in activitySlides[slideIndexes.activities].resources" :key="resource.href" :href="resource.href" target="_blank" rel="noreferrer">{{ resource.label }} ↗</a>
               </div>
             </div>
             <div class="gallery activity-gallery" :class="{ 'show-nav': hintVisible.activities }" data-gallery="activities" role="region" aria-roledescription="carousel" aria-label="대외 활동 자료" tabindex="0" @keydown.left.prevent="moveSlide('activities', -1)" @keydown.right.prevent="moveSlide('activities', 1)" @touchstart.passive="startSwipe" @touchend.passive="endSwipe('activities', $event)" @pointerdown="startMouseDrag" @pointerup="endMouseDrag('activities', $event)" @pointercancel="cancelMouseDrag">
@@ -746,18 +748,20 @@ const awards = [
         <div class="content">
           <header class="section-heading credentials-heading">
             <div><p class="eyebrow">Credentials</p><h2>자격 · 수상</h2></div>
-            <p>프로젝트 과정에서 얻은 결과만 간단히 기록했습니다.</p>
           </header>
           <article class="certificate-card">
-            <div><p class="certificate-date">2026.09</p><span>최종합격</span></div>
+            <div><span>최종합격</span></div>
             <h3>정보처리기사</h3>
-            <p>한국산업인력공단</p>
+            <p>한국산업인력공단 · 자격번호 26202050825D</p>
           </article>
           <div class="award-list" aria-label="수상 내역">
             <article v-for="award in awards" :key="award.title">
               <time>{{ award.year }}</time>
               <h3>{{ award.title }}</h3>
-              <p>{{ award.detail }}</p>
+              <p>
+                <span>{{ award.detail }}</span>
+                <a v-if="award.href" :href="award.href" target="_blank" rel="noreferrer">관련 기사 ↗</a>
+              </p>
             </article>
           </div>
         </div>

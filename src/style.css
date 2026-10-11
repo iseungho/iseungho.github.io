@@ -242,6 +242,7 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .award-list time { color: var(--accent); font-size: .94rem; font-weight: 900; }
 .award-list h3 { margin: 0; font-size: 1.14rem; line-height: 1.45; letter-spacing: -.015em; font-weight: 850; }
 .award-list p { margin: 0; color: var(--text-soft); font-size: .96rem; text-align: right; }
+.award-list p a { display: block; width: fit-content; margin: 5px 0 0 auto; color: var(--accent); font-weight: 850; text-decoration: underline; text-underline-offset: 4px; }
 
 .activity-layout { display: grid; grid-template-columns: .48fr 1.52fr; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); }
 .activity-summary { display: flex; flex-direction: column; justify-content: flex-end; padding: 44px 38px; border-right: 1px solid var(--line); }
@@ -259,7 +260,7 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .activity-gallery img { object-fit: cover; background: #f7f7f7; }
 
 .credentials-heading { margin-bottom: 44px; }
-.certificate-card { display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; align-items: center; padding: 34px 38px; border-block: 1px solid var(--line-strong); background: var(--surface); }
+.certificate-card { display: grid; grid-template-columns: 120px 1fr auto; gap: 32px; align-items: center; padding: 34px 38px; border-block: 1px solid var(--line-strong); background: var(--surface); }
 .certificate-card > div { display: flex; align-items: center; gap: 12px; }
 .certificate-date { margin: 0; color: var(--accent); font-size: 1rem; font-weight: 900; }
 .certificate-card span { padding: 6px 9px; border-radius: 5px; color: var(--accent); background: var(--accent-soft); font-size: .85rem; font-weight: 900; }
@@ -348,6 +349,7 @@ footer p { margin: 0; }
   .award-list { margin-top: 42px; }
   .award-list article { grid-template-columns: 88px 1fr; gap: 8px 16px; }
   .award-list p { grid-column: 2; text-align: left; }
+  .award-list p a { margin-left: 0; }
   .activity-layout { min-height: 0; border-radius: 14px; }
   .activity-summary { min-height: 250px; padding: 32px 24px; }
   .activity-index { font-size: 2.8rem; }
