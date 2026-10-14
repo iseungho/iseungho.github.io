@@ -15,6 +15,7 @@ const projectLinks = {
 
 const isDark = ref(false)
 const activeSection = ref('top')
+const expandedAward = ref<number | null>(null)
 const imageDialog = ref<HTMLDialogElement | null>(null)
 let swipeStartX = 0
 let swipeStartY = 0
@@ -422,10 +423,10 @@ const careers = [
 ]
 
 const awards = [
-  { year: '2024.11', title: '제21회 홍익대학교 과학기술대학 소프트웨어융합학과 학술제 대상', detail: '총장상', href: null },
-  { year: '2024.12', title: '홍익대학교 과학기술대학 소프트웨어융합학과 종합설계 졸업작품 우수 작품 선정', detail: '부총장상', href: null },
-  { year: '2024.08', title: 'SW융합클러스터 2.0 디지털 콘텐츠 세종 DX 해커톤 - 문화·관광 디지털 콘텐츠', detail: '우수상', href: 'https://www.hongik.ac.kr/kr/newscenter/news.do?mode=view&articleNo=115480' },
-  { year: '2023.09', title: 'SW융합클러스터 2.0 디지털 콘텐츠 DX 해커톤 SW융합클러스터 - 취약 계층 문제 해결', detail: '인재상', href: null },
+  { year: '2024.11', title: '제21회 홍익대학교 과학기술대학 소프트웨어융합학과 학술제 대상', detail: '총장상', href: null, images: [{ src: '/awards/01-festival-grand-prize.png', alt: '제21회 소프트웨어융합학과 학술제 대상 수상 사진과 상장' }] },
+  { year: '2024.12', title: '홍익대학교 과학기술대학 소프트웨어융합학과 종합설계 졸업작품 우수 작품 선정', detail: '부총장상', href: null, images: [{ src: '/awards/02-capstone-award.png', alt: '종합설계 졸업작품 우수 작품 전시 사진과 부총장상 상장' }] },
+  { year: '2024.08', title: 'SW융합클러스터 2.0 디지털 콘텐츠 세종 DX 해커톤 - 문화·관광 디지털 콘텐츠', detail: '우수상', href: 'https://www.hongik.ac.kr/kr/newscenter/news.do?mode=view&articleNo=115480', images: [{ src: '/awards/03-hackathon-group.png', alt: '2024 세종 DX 해커톤 참가자 단체 사진' }, { src: '/awards/04-hackathon-award.png', alt: '2024 세종 DX 해커톤 문화·관광 디지털 콘텐츠 우수상 수상 사진과 상장' }] },
+  { year: '2023.09', title: 'SW융합클러스터 2.0 디지털 콘텐츠 DX 해커톤 SW융합클러스터 - 취약 계층 문제 해결', detail: '인재상', href: null, images: [{ src: '/awards/05-talent-award.png', alt: '2023 SW융합클러스터 디지털 콘텐츠 DX 해커톤 인재상 상장' }] },
 ]
 </script>
 
@@ -755,13 +756,25 @@ const awards = [
             <p>한국산업인력공단 · 자격번호 26202050825D</p>
           </article>
           <div class="award-list" aria-label="수상 내역">
-            <article v-for="award in awards" :key="award.title">
-              <time>{{ award.year }}</time>
-              <div class="award-title">
-                <h3>{{ award.title }}</h3>
-                <a v-if="award.href" :href="award.href" target="_blank" rel="noreferrer">관련 기사 ↗</a>
+            <article v-for="(award, index) in awards" :key="award.title" :class="{ expanded: expandedAward === index }">
+              <div class="award-row">
+                <time>{{ award.year }}</time>
+                <div class="award-title">
+                  <button type="button" class="award-toggle" :aria-expanded="expandedAward === index" :aria-controls="`award-panel-${index}`" @click="expandedAward = expandedAward === index ? null : index">
+                    <h3>{{ award.title }}</h3>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                  </button>
+                  <a v-if="award.href" :href="award.href" target="_blank" rel="noreferrer">관련 기사 ↗</a>
+                </div>
+                <p>{{ award.detail }}</p>
               </div>
-              <p>{{ award.detail }}</p>
+              <div :id="`award-panel-${index}`" class="award-panel" :aria-hidden="expandedAward !== index">
+                <div class="award-panel-inner">
+                  <div class="award-media" :class="{ multiple: award.images.length > 1 }">
+                    <img v-for="image in award.images" :key="image.src" :src="image.src" :alt="image.alt" loading="lazy">
+                  </div>
+                </div>
+              </div>
             </article>
           </div>
         </div>

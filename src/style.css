@@ -93,7 +93,7 @@ img { display: block; max-width: 100%; }
 .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 5px color-mix(in srgb, var(--lime) 22%, transparent); }
 h1, h2, h3 { word-break: keep-all; overflow-wrap: anywhere; text-wrap: balance; }
 p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap: pretty; }
-.hero h1 { margin: 28px 0 0; max-width: 820px; font-size: clamp(3.35rem, 6.2vw, 5.8rem); line-height: 1.02; letter-spacing: -.055em; font-weight: 900; text-wrap: balance; }
+.hero h1 { margin: 28px 0 0; max-width: 820px; font-size: clamp(3.35rem, 6.2vw, 5.8rem); line-height: 1.02; letter-spacing: -.02em; font-weight: 900; text-wrap: balance; }
 .hero h1 span { color: var(--accent); }
 .hero-copy { max-width: 780px; margin: 34px 0 0; color: var(--text-soft); font-size: clamp(1.1rem, 1.7vw, 1.35rem); line-height: 1.8; }
 .button-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 38px; }
@@ -238,12 +238,24 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .education-project strong { display: block; margin-top: 8px; font-size: 1.15rem; }
 .education-project .text-link { margin-top: 14px; }
 .award-list { margin-top: 54px; border-top: 1px solid var(--line-strong); }
-.award-list article { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 24px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.award-list article { border-bottom: 1px solid var(--line); }
+.award-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 24px; align-items: baseline; padding: 22px 0; }
 .award-list time { color: var(--accent); font-size: .94rem; font-weight: 900; }
 .award-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .award-list h3 { margin: 0; font-size: 1.14rem; line-height: 1.45; letter-spacing: -.015em; font-weight: 850; }
 .award-list p { margin: 0; color: var(--text-soft); font-size: .96rem; text-align: right; }
 .award-title a { flex: none; color: var(--accent); font-size: .9rem; font-weight: 850; text-decoration: underline; text-underline-offset: 4px; }
+.award-toggle { display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 0; color: var(--text); background: transparent; text-align: left; cursor: pointer; }
+.award-toggle:hover, .award-toggle:focus-visible { color: var(--accent); }
+.award-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; border-radius: 2px; }
+.award-toggle svg { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .24s var(--ease-out); }
+.award-list article.expanded .award-toggle svg { transform: rotate(180deg); }
+.award-panel { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .32s var(--ease-in-out), visibility 0s linear .32s; }
+.award-list article.expanded .award-panel { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .32s var(--ease-in-out); }
+.award-panel-inner { min-height: 0; overflow: hidden; }
+.award-media { margin: 0 0 28px; padding: 18px; border: 1px solid #e2e6ec; border-radius: 12px; background: #fff; }
+.award-media.multiple { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.award-media img { width: 100%; max-height: 720px; margin-inline: auto; border-radius: 8px; object-fit: contain; background: #fff; }
 
 .activity-layout { display: grid; grid-template-columns: .48fr 1.52fr; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); }
 .activity-summary { display: flex; flex-direction: column; justify-content: flex-end; padding: 44px 38px; border-right: 1px solid var(--line); }
@@ -348,8 +360,10 @@ footer p { margin: 0; }
   .education-copy { padding: 34px 24px 40px; }
   .education-card h3 { font-size: 2rem; }
   .award-list { margin-top: 42px; }
-  .award-list article { grid-template-columns: 88px 1fr; gap: 8px 16px; }
-  .award-list p { grid-column: 2; text-align: left; }
+  .award-row { grid-template-columns: 88px 1fr; gap: 8px 16px; }
+  .award-row p { grid-column: 2; text-align: left; }
+  .award-media { margin-bottom: 22px; padding: 10px; }
+  .award-media.multiple { grid-template-columns: 1fr; }
   .activity-layout { min-height: 0; border-radius: 14px; }
   .activity-summary { min-height: 250px; padding: 32px 24px; }
   .activity-index { font-size: 2.8rem; }
