@@ -10,7 +10,7 @@ const projectLinks = {
   researchRiss: 'https://www.riss.kr/search/detail/DetailView.do?p_mat_type=1a0202e37d52c72d&control_no=6e54ad96001b65aee9810257f7042666&keyword=%EC%B4%88%ED%95%B4%EC%83%81%ED%99%94%20%EA%B8%B0%EB%B0%98%20%ED%8C%8C%EB%85%B8%EB%9D%BC%EB%A7%88%20%EC%8A%A4%ED%8B%B0%EC%B9%AD%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%97%90%EC%84%9C%20%EC%99%9C%EA%B3%A1%20%ED%98%84%EC%83%81%20%EC%B5%9C%EC%86%8C%ED%99%94%20%EC%97%B0%EA%B5%AC',
   researchDbpia: 'https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12036439',
   worldCloud: 'https://github.com/iseungho/Project-WorldCloud',
-  pangyeori: 'https://github.com/pangyeori/pangyeori-fe',
+  pangyeori: 'https://github.com/pangyeori/pangyeori-fe/pull/56',
 }
 
 const isDark = ref(false)
@@ -645,13 +645,13 @@ const awards = [
             <p class="case-period">2026.08.06 — 진행 중 · Frontend</p>
             <h2>판겨리</h2>
             <p class="now-title">AI가 판정하는 1:1 채팅 토론 서비스</p>
-            <p class="now-copy">토론 참여 전후의 상태가 복잡한 서비스에서 사용자가 지금 해야 할 행동을 놓치지 않도록 화면 흐름을 설계하고 있습니다.</p>
+            <p class="now-copy">실시간 이벤트가 누락되거나 사용자가 재접속해도 서버 상태를 기준으로 토론 단계를 복구하고, AI 판정과 새 발언을 놓치지 않도록 진행 화면을 설계하고 있습니다.</p>
             <dl class="now-details">
-              <div><dt>구현 완료</dt><dd>이메일 인증과 계정 관리, 토론방 생성·진영 선택, 초대 링크, 상대 참여 확인과 실시간 대기 알림, 프로필·내 토론 목록</dd></div>
-              <div><dt>개발 중</dt><dd>단계별 실시간 토론 채팅, 발언 순서와 제한 시간, AI 분석을 통한 최종 판정·요약·피드백</dd></div>
+              <div><dt>구현 완료</dt><dd>토론방 생성·초대, 참여 상태 복구, 단계별 발언과 제한 시간, WebSocket 진행 이벤트, AI 중간 판정과 새 발언 이동</dd></div>
+              <div><dt>개발 중</dt><dd>자유 토론 WebSocket 송수신, 토론 종료 후 최종 판정·요약·피드백</dd></div>
             </dl>
-            <div class="tag-list"><span v-for="item in ['Next.js', 'React', 'TypeScript', 'TanStack Query', 'React Hook Form', 'Zod']" :key="item">{{ item }}</span></div>
-            <a :href="projectLinks.pangyeori" target="_blank" rel="noreferrer" class="button button-primary"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.71.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.36-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.97a9.3 9.3 0 0 1 2.5.35c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" clip-rule="evenodd"/></svg>GitHub에서 진행 상황 보기 ↗</a>
+            <div class="tag-list"><span v-for="item in ['Next.js', 'React', 'TypeScript', 'TanStack Query', 'WebSocket', 'React Hook Form', 'Zod']" :key="item">{{ item }}</span></div>
+            <a :href="projectLinks.pangyeori" target="_blank" rel="noreferrer" class="button button-primary"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.71.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.36-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.97a9.3 9.3 0 0 1 2.5.35c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" clip-rule="evenodd"/></svg>최신 PR에서 구현 보기 ↗</a>
           </div>
         </div>
       </section>
