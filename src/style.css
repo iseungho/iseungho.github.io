@@ -202,8 +202,11 @@ p, dd, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; text-wrap
 .now-details dt { color: #fff; font-weight: 900; }
 .now-details dd { margin: 10px 0 0; color: #dbe4ff; line-height: 1.7; }
 .now-section .tag-list span { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.1); color: #fff; }
-.now-section .button-primary { margin-top: 34px; background: #fff; color: #113ab8; border-color: #fff; }
+.now-section .button-row { margin-top: 34px; }
+.now-section .button-primary { background: #fff; color: #113ab8; border-color: #fff; }
 .now-section .button-primary:hover { background: var(--lime); border-color: var(--lime); color: #10210d; }
+.now-section .button-secondary { border-color: rgba(255,255,255,.55); background: transparent; color: #fff; }
+.now-section .button-secondary:hover { border-color: #fff; background: rgba(255,255,255,.12); color: #fff; }
 
 .about-grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 100px; align-items: start; }
 .about-grid header > p:last-child { max-width: 510px; margin: 30px 0 0; color: var(--text-soft); font-size: 1.08rem; }
